@@ -1,6 +1,7 @@
 import {Request, Response} from 'express'
 import Photo from '../models/photo'
-import photo from '../models/photo';
+import path from 'path'
+import fs from 'fs-extra'
 
 export async function getPhotos(req: Request, res: Response): Promise<Response>{
     const photos = await Photo.find()
@@ -35,8 +36,24 @@ export async function createPhoto(req: Request, res: Response): Promise<Response
 export async function deletePhoto(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
     const photo = await Photo.findByIdAndRemove(id);
+    if (photo) {
+        await fs.unlink(path.resolve(photo.imagePath))
+    }
     return res.json({
         message: "Su foto ha sido eliminada",
         photo
     })
 }
+
+export async function updatePhoto(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
+    const {title, description } = req.body;
+    const updatedPhoto = await Photo.findByIdAndUpdate(id, {
+        title,
+        description
+    }, {new: true});
+    return res.json({
+        message: "Foto actulizada correctamente",
+        updatedPhoto
+    });
+}   
