@@ -7,6 +7,15 @@ export async function getPhotos(req: Request, res: Response): Promise<Response>{
     return res.json(photos);
 }
 
+
+export async function getPhoto(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
+    const photo = await Photo.findById(req.params.id);
+    return res.json(photo);
+}
+
+
+
 export async function createPhoto(req: Request, res: Response): Promise<Response> {
     
     const {title, description} = req.body;
